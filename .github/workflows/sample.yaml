@@ -10,3 +10,11 @@ jobs:
             - name: "Welcome Step"
               run: |
                 echo "Welcome to this step"
+
+            - name: "checkout"
+              uses: actions/checkout@v4
+
+
+            - name: "List project directory"
+              run: |
+                ls -a
