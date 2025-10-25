@@ -1,20 +1,22 @@
 name: "Sample Workflow"
-on: 
-    push: 
-        branches: 
-        - master
-jobs: 
-    testing_job:
-        runs-on: ubuntu-latest
-        steps: 
-            - name: "Welcome Step"
-              run: |
-                echo "Welcome to this step"
 
-            - name: "checkout"
-              uses: actions/checkout@v4
+on:
+  push:
+    branches:
+      - master
 
+jobs:
+  testing_job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Welcome Step"
+        run: echo "Welcome to this step"
 
-            - name: "List project directory"
-              run: |
-                ls -a
+      - name: "Checkout repository"
+        uses: actions/checkout@v4
+
+      - name: "List project directory"
+        run: ls -a
+
+      - name: "Build Docker image"
+        run: docker build -t actionclass:2 .
