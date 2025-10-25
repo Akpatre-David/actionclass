@@ -1,22 +1,29 @@
 name: "Sample Workflow"
+on: 
+    push: 
+        branches: 
+        - master
+jobs: 
+    testing_job:
+        runs-on: ubuntu-latest
+        steps: 
+            - name: "Welcome Step"
+              run: |
+                echo "Welcome to this step"
+                ls -a
 
-on:
-  push:
-    branches:
-      - master
+            - name: "Checkout from github directory"
+              uses: actions/checkout@v4
+            
+            - name: "List the project directory"
+              run: |
+                ls -a
 
-jobs:
-  testing_job:
-    runs-on: ubuntu-latest
-    steps:
-      - name: "Welcome Step"
-        run: echo "Welcome to this step"
+            - name: Build Docker Image
+              run: | 
+                docker build -t 17csc028/actions1 .
 
-      - name: "Checkout repository"
-        uses: actions/checkout@v4
-
-      - name: "List project directory"
-        run: ls -a
-
-      - name: "Build Docker image"
-        run: docker build -t actionclass:2 .
+            - name: Push to Docker Hub
+              run: |
+                docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+                docker push 17csc028/actions1
