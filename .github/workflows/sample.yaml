@@ -1,29 +1,51 @@
 name: "Sample Workflow"
-on: 
-    push: 
-        branches: 
-        - master
-jobs: 
-    testing_job:
-        runs-on: ubuntu-latest
-        steps: 
-            - name: "Welcome Step"
-              run: |
-                echo "Welcome to this step"
-                ls -a
 
-            - name: "Checkout from github directory"
-              uses: actions/checkout@v4
-            
-            - name: "List the project directory"
-              run: |
-                ls -a
+on:
+  push:
+    branches:
+      - master
 
-            - name: Build Docker Image
-              run: | 
-                docker build -t 17csc028/actions1 .
+jobs:
+  testing_job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Welcome Step"
+        run: |
+          echo "Welcome to this step"
+          ls -a
 
-            - name: Push to Docker Hub
-              run: |
-                docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-                docker push 17csc028/actions1
+      - name: "Checkout from GitHub directory"
+        uses: actions/checkout@v4
+
+      - name: "List the project directory"
+        run: |
+          ls -a
+
+      # Build Docker image
+      - name: "Build Docker Image"
+        run: |
+          docker build -t 17csc028/actions1 .
+
+      # Push to Docker Hub
+      - name: "Push to Docker Hub"
+        run: |
+          echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+          docker push 17csc028/actions1
+
+      # Scan for vulnerabilities
+      - name: "Scan for vulnerabilities"
+        uses: snyk/actions/docker@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_SECRET }}
+        with:
+          image: 17csc028/actions1
+          args: test --severity-threshold=high
+
+      # Monitor project in Snyk dashboard
+      - name: "Monitor project in Snyk"
+        uses: snyk/actions/docker@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_SECRET }}
+        with:
+          image: 17csc028/actions1
+          command: monitor
