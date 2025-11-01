@@ -39,7 +39,8 @@ jobs:
           SNYK_TOKEN: ${{ secrets.SNYK_SECRET }}
         with:
           image: 17csc028/actions1
-          args: test --severity-threshold=high
+          command: test
+          args: --severity-threshold=high
 
       # Monitor project in Snyk dashboard
       - name: "Monitor project in Snyk"
